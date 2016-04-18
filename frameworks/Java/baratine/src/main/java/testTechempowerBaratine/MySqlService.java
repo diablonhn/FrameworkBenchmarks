@@ -30,8 +30,6 @@ public class MySqlService
   @Inject
   private JdbcService _jdbcService;
 
-  private String _jdbcUrl;
-
   @OnInit
   public void onInit(Result<Void> result)
   {
