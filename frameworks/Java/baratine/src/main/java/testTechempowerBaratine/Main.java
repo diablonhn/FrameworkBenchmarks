@@ -19,8 +19,8 @@ public class Main
     throws Exception
   {
     String jdbcHost;
-    String jdbcUser = "benchmarkdbuser";
-    String jdbcPass = "benchmarkdbpass";
+    String jdbcUser = null;
+    String jdbcPass = null;
 
     if (args.length > 0) {
       jdbcHost = args[0];
@@ -42,8 +42,14 @@ public class Main
     System.out.println("Main.main: jdbcHost=" + jdbcHost + ", user=" + jdbcUser);
 
     Web.property(JdbcService.CONFIG_URL, jdbcHost);
-    Web.property(JdbcService.CONFIG_USER, jdbcUser);
-    Web.property(JdbcService.CONFIG_PASS, jdbcPass);
+
+    if (jdbcUser != null) {
+      Web.property(JdbcService.CONFIG_USER, jdbcUser);
+
+      if (jdbcPass != null) {
+        Web.property(JdbcService.CONFIG_PASS, jdbcPass);
+      }
+    }
 
     include(JdbcServiceImpl.class);
 

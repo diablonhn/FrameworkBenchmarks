@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import com.caucho.v5.jdbc.JdbcResultSet;
 import com.caucho.v5.jdbc.JdbcService;
-import com.caucho.v5.jdbc.ResultSetKraken;
 
 import io.baratine.service.OnInit;
 import io.baratine.service.Result;
@@ -23,8 +23,8 @@ public class MySqlService
 
   public static final int DB_ROWS = 10000;
 
-  private static final String SINGLE_QUERY = "SELECT * FROM World WHERE `id` = ?";
-  private static final String UPDATE_QUERY = "UPDATE World SET `randomNumber` = ? WHERE `id` = ?";
+  private static final String SINGLE_QUERY = "SELECT * FROM World WHERE id = ?";
+  private static final String UPDATE_QUERY = "UPDATE World SET randomNumber = ? WHERE id = ?";
 
   private Random _rand = new Random(0);
 
@@ -64,8 +64,16 @@ public class MySqlService
   }
 
   @Get("/query")
-  public void doQueries(@Query("count") int count, Result<World[]> result)
+  public void doQueries(@Query("count") String countStr, Result<World[]> result)
   {
+    int count = 0;
+
+    try {
+      count = Integer.parseInt(countStr);
+    }
+    catch (Exception e) {
+    }
+
     if (count < 1) {
       count = 1;
     }
@@ -73,6 +81,11 @@ public class MySqlService
       count = 500;
     }
 
+    doQueries(count, result);
+  }
+
+  private void doQueries(int count, Result<World[]> result)
+  {
     Object[][] idList = new Object[count][1];
 
     for (int i = 0; i < count; i++) {
@@ -89,7 +102,7 @@ public class MySqlService
         World[] list = new World[rsList.length];
 
         for (int i = 0; i < rsList.length; i++) {
-          ResultSetKraken rs = rsList[i];
+          JdbcResultSet rs = rsList[i];
 
           Map<String,Object> map = rs.getFirstRow();
 
