@@ -2,6 +2,7 @@ package testTechempowerBaratine;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -40,6 +41,10 @@ public class MySqlService
   public void doSingleQuery(Result<World> result)
   {
     int id = _rand.nextInt(DB_ROWS);
+
+    if (_logger.isLoggable(Level.FINER)) {
+      _logger.fine("doSingleQuery: id=" + id);
+    }
 
     _jdbcService.query((rs, e) -> {
       if (e != null) {
