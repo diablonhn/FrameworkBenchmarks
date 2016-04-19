@@ -35,7 +35,7 @@ public class Main
       initHsqldb(jdbcHost);
     }
 
-    if (args.length > 3 && "finer".equals(args[1])) {
+    if (args.length > 3 && "finer".equals(args[3])) {
       Logger.getLogger("").setLevel(Level.FINER);
     }
 
