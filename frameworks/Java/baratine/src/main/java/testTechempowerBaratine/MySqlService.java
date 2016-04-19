@@ -55,7 +55,7 @@ public class MySqlService
     }, SINGLE_QUERY, id);
   }
 
-  @Get("/queries")
+  @Get("/query")
   public void doQueries(@Query("queries") int count, Result<World[]> result)
   {
     if (count < 1) {
