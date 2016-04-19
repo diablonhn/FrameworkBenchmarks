@@ -19,9 +19,13 @@ public class Main
     throws Exception
   {
     String jdbcHost;
+    String jdbcUser = "benchmarkdbuser";
+    String jdbcPass = "benchmarkdbpass";
 
     if (args.length > 0) {
       jdbcHost = args[0];
+      jdbcUser = args[1];
+      jdbcPass = args[2];
     }
     else {
       jdbcHost = "jdbc:hsqldb:mem:testdb";
@@ -31,13 +35,15 @@ public class Main
       initHsqldb(jdbcHost);
     }
 
-    if (args.length > 1 && "finer".equals(args[1])) {
+    if (args.length > 3 && "finer".equals(args[1])) {
       Logger.getLogger("").setLevel(Level.FINER);
     }
 
-    System.out.println("Main.main: jdbcHost=" + jdbcHost);
+    System.out.println("Main.main: jdbcHost=" + jdbcHost + ", user=" + jdbcUser);
 
     Web.property(JdbcService.CONFIG_URL, jdbcHost);
+    Web.property(JdbcService.CONFIG_USER, jdbcUser);
+    Web.property(JdbcService.CONFIG_PASS, jdbcPass);
 
     include(JdbcServiceImpl.class);
 
