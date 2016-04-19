@@ -96,7 +96,7 @@ public class MySqlService
   }
 
   @Get("/update")
-  public void doUpdate(@Query("queries") int count, Result<World[]> result)
+  public void doUpdate(@Query("count") int count, Result<World[]> result)
   {
     doQueries(count, (list, e) -> {
       if (e != null) {
