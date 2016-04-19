@@ -64,7 +64,7 @@ public class MySqlService
   }
 
   @Get("/query")
-  public void doQueries(@Query("queries") int count, Result<World[]> result)
+  public void doQueries(@Query("count") int count, Result<World[]> result)
   {
     if (count < 1) {
       count = 1;
