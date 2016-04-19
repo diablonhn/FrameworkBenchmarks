@@ -35,6 +35,8 @@ public class Main
       Logger.getLogger("").setLevel(Level.FINER);
     }
 
+    System.out.println("Main.main: jdbcHost=" + jdbcHost);
+
     Web.property(JdbcService.CONFIG_URL, jdbcHost);
 
     include(JdbcServiceImpl.class);

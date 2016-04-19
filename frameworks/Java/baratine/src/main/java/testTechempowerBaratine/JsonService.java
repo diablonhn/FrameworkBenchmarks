@@ -8,17 +8,8 @@ import io.baratine.web.Get;
 public class JsonService
 {
   @Get("/json")
-  public void hello(Result<HelloWorld> result)
+  public void hello(Result<Message> result)
   {
-    result.ok(new HelloWorld("Hello, World!"));
-  }
-
-  public static class HelloWorld {
-    private String message;
-
-    public HelloWorld(String msg)
-    {
-      this.message = msg;
-    }
+    result.ok(new Message("Hello, World!"));
   }
 }
