@@ -93,7 +93,10 @@ public class MySqlService
 
           Map<String,Object> map = rs.getFirstRow();
 
-          World world = new World((Integer) map.get("id"), (Integer) map.get("randomNumber"));
+          Number idVal = (Number) map.get("id");
+          Number randomNumberVal = (Number) map.get("randomNumber");
+
+          World world = new World(idVal.intValue(), randomNumberVal.intValue());
 
           list[i] = world;
         }
