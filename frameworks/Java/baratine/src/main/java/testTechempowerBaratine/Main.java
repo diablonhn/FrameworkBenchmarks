@@ -18,8 +18,6 @@ public class Main
   public static void main(String[] args)
     throws Exception
   {
-    Logger.getLogger("").setLevel(Level.FINER);
-
     String jdbcHost;
 
     if (args.length > 0) {
@@ -27,8 +25,14 @@ public class Main
     }
     else {
       jdbcHost = "jdbc:hsqldb:mem:testdb";
+    }
 
+    if (jdbcHost.startsWith("jdbc:hsqldb:mem")) {
       initHsqldb(jdbcHost);
+    }
+
+    if (args.length > 1 && "finer".equals(args[1])) {
+      Logger.getLogger("").setLevel(Level.FINER);
     }
 
     Web.property(JdbcService.CONFIG_URL, jdbcHost);
