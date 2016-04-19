@@ -23,8 +23,8 @@ public class MySqlService
 
   public static final int DB_ROWS = 10000;
 
-  private static final String SINGLE_QUERY = "SELECT * FROM World WHERE \"id\" = ?";
-  private static final String UPDATE_QUERY = "UPDATE World SET \"randomNumber\" = ? WHERE id = ?";
+  private static final String SINGLE_QUERY = "SELECT * FROM World WHERE `id` = ?";
+  private static final String UPDATE_QUERY = "UPDATE World SET `randomNumber` = ? WHERE `id` = ?";
 
   private Random _rand = new Random(0);
 
