@@ -150,7 +150,7 @@ public class MySqlService
     });
   }
 
-  @Get("/fortunes")
+  @Get("/fortune")
   public void getFortunes(Result<ViewAndMap> result)
   {
     _jdbcService.query((rs, e) -> {
