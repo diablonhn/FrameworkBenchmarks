@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import com.caucho.v5.jdbc.JdbcService;
 import com.caucho.v5.jdbc.JdbcServiceImpl;
 
+import io.baratine.web.Views;
 import io.baratine.web.Web;
 
 public class Main
@@ -18,9 +19,13 @@ public class Main
   public static void main(String[] args)
     throws Exception
   {
+    scanAutoConf();
+
     String jdbcHost;
     String jdbcUser = null;
     String jdbcPass = null;
+
+    String poolSize = null;
 
     if (args.length > 0) {
       jdbcHost = args[0];
@@ -35,7 +40,11 @@ public class Main
       initHsqldb(jdbcHost);
     }
 
-    if (args.length > 3 && "finer".equals(args[3])) {
+    if (args.length > 3) {
+      poolSize = args[3];
+    }
+
+    if (args.length > 4 && "finer".equals(args[4])) {
       Logger.getLogger("").setLevel(Level.FINER);
     }
 
@@ -49,6 +58,10 @@ public class Main
       if (jdbcPass != null) {
         Web.property(JdbcService.CONFIG_PASS, jdbcPass);
       }
+    }
+
+    if (poolSize != null) {
+      Web.property(JdbcService.CONFIG_POOL_SIZE, poolSize);
     }
 
     include(JdbcServiceImpl.class);
@@ -69,7 +82,13 @@ public class Main
       conn = DriverManager.getConnection(url);
 
       try {
-        conn.prepareCall("DROP TABLE testTable").execute();
+        conn.prepareCall("DROP TABLE World").execute();
+      }
+      catch (SQLException e) {
+      }
+
+      try {
+        conn.prepareCall("DROP TABLE Fortune").execute();
       }
       catch (SQLException e) {
       }
@@ -78,6 +97,12 @@ public class Main
 
       for (int i = 0; i < MySqlService.DB_ROWS; i++) {
         conn.createStatement().execute("INSERT INTO World VALUES (" + i + ", " + 9000 + i + ")");
+      }
+
+      conn.createStatement().execute("CREATE TABLE Fortune (\"id\" INT PRIMARY KEY, \"message\" VARCHAR(2048))");
+
+      for (int i = 0; i < MySqlService.FORTUNE_ROWS; i++) {
+        conn.createStatement().execute("INSERT INTO Fortune VALUES (" + i + ", 'message" + i + "')");
       }
     }
     finally {

@@ -5,7 +5,7 @@ public class World
   private int id;
   private int randomNumber;
 
-  public World()
+  protected World()
   {
   }
 

@@ -1,5 +1,7 @@
 package testTechempowerBaratine;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
@@ -15,6 +17,8 @@ import io.baratine.service.Result;
 import io.baratine.service.Service;
 import io.baratine.web.Get;
 import io.baratine.web.Query;
+import io.baratine.web.ViewAndMap;
+import io.baratine.web.Views;
 
 @Service
 public class MySqlService
@@ -22,9 +26,12 @@ public class MySqlService
   private Logger _logger = Logger.getLogger(MySqlService.class.toString());
 
   public static final int DB_ROWS = 10000;
+  public static final int FORTUNE_ROWS = 12;
 
   private static final String SINGLE_QUERY = "SELECT * FROM World WHERE id = ?";
   private static final String UPDATE_QUERY = "UPDATE World SET randomNumber = ? WHERE id = ?";
+
+  private static final String FORTUNE_QUERY = "SELECT * FROM Fortune";
 
   private Random _rand = new Random(0);
 
@@ -127,7 +134,7 @@ public class MySqlService
         result.fail(e);
       }
       else {
-        Object[][] updateParamsList = new Object[list.length][2];
+        World[] updateList = new World[list.length];
 
         for (int i = 0; i < list.length; i++) {
           World world = list[i];
@@ -135,11 +142,59 @@ public class MySqlService
           int id = world.getId();
           int randomNumber = _rand.nextInt(DB_ROWS);
 
-          updateParamsList[i] = new Integer[] {randomNumber, id};
+          updateList[i] = new World(id, randomNumber);
         }
 
-        result.ok(list);
+        doUpdate(updateList, result);
       }
     });
+  }
+
+  @Get("/fortunes")
+  public void getFortunes(Result<ViewAndMap> result)
+  {
+    _jdbcService.query((rs, e) -> {
+      ArrayList<Fortune> list = new ArrayList<>();
+
+      for (Map<String,Object> row : rs.getRows()) {
+        Number idVal = (Number) row.get("id");
+        String message = (String) row.get("message");
+
+        Fortune fortune = new Fortune(idVal.intValue(), message);
+        list.add(fortune);
+      }
+
+      list.add(new Fortune(0, "Additional fortune added at request time."));
+
+      Collections.sort(list);
+
+      ViewAndMap viewMap = Views.view("fortunes.mustache").add("fortunes", list);
+
+      result.ok(viewMap);
+
+    }, FORTUNE_QUERY);
+  }
+
+  private void doUpdate(World[] updateList, Result<World[]> result)
+  {
+    Object[][] updateParamsList = new Object[updateList.length][2];
+
+    for (int i = 0; i < updateList.length; i++) {
+      World world = updateList[i];
+
+      int id = world.getId();
+      int randomNumber = _rand.nextInt(DB_ROWS);
+
+      updateParamsList[i] = new Integer[] {randomNumber, id};
+    }
+
+    _jdbcService.queryBatch((rsList, e) -> {
+      if (e != null) {
+        result.fail(e);
+      }
+      else {
+        result.ok(updateList);
+      }
+    }, UPDATE_QUERY, updateParamsList);
   }
 }
