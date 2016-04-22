@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 import com.caucho.v5.jdbc.JdbcService;
 import com.caucho.v5.jdbc.JdbcServiceImpl;
 
-import io.baratine.web.Views;
 import io.baratine.web.Web;
 
 public class Main

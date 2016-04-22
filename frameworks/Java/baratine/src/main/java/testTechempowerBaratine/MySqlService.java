@@ -17,8 +17,7 @@ import io.baratine.service.Result;
 import io.baratine.service.Service;
 import io.baratine.web.Get;
 import io.baratine.web.Query;
-import io.baratine.web.ViewAndMap;
-import io.baratine.web.Views;
+import io.baratine.web.View;
 
 @Service
 public class MySqlService
@@ -150,31 +149,6 @@ public class MySqlService
     });
   }
 
-  @Get("/fortune")
-  public void getFortunes(Result<ViewAndMap> result)
-  {
-    _jdbcService.query((rs, e) -> {
-      ArrayList<Fortune> list = new ArrayList<>();
-
-      for (Map<String,Object> row : rs.getRows()) {
-        Number idVal = (Number) row.get("id");
-        String message = (String) row.get("message");
-
-        Fortune fortune = new Fortune(idVal.intValue(), message);
-        list.add(fortune);
-      }
-
-      list.add(new Fortune(0, "Additional fortune added at request time."));
-
-      Collections.sort(list);
-
-      ViewAndMap viewMap = Views.view("fortunes.mustache").add("fortunes", list);
-
-      result.ok(viewMap);
-
-    }, FORTUNE_QUERY);
-  }
-
   private void doUpdate(World[] updateList, Result<World[]> result)
   {
     Object[][] updateParamsList = new Object[updateList.length][2];
@@ -196,5 +170,30 @@ public class MySqlService
         result.ok(updateList);
       }
     }, UPDATE_QUERY, updateParamsList);
+  }
+
+  @Get("/fortune")
+  public void getFortunes(Result<View> result)
+  {
+    _jdbcService.query((rs, e) -> {
+      ArrayList<Fortune> list = new ArrayList<>();
+
+      for (Map<String,Object> row : rs.getRows()) {
+        Number idVal = (Number) row.get("id");
+        String message = (String) row.get("message");
+
+        Fortune fortune = new Fortune(idVal.intValue(), message);
+        list.add(fortune);
+      }
+
+      list.add(new Fortune(0, "Additional fortune added at request time."));
+
+      Collections.sort(list);
+
+      View view = View.newView("fortunes.mustache").add("fortunes", list);
+
+      result.ok(view);
+
+    }, FORTUNE_QUERY);
   }
 }
